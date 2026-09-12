@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oreo and Lilies Garden</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 40%, #7CB342 70%, #558B2F 100%);
+      overflow-x: hidden;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      position: relative;
+    }
+
+    /* Soft floating particles */
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float-up 8s linear infinite;
+    }
+
+    @keyframes float-up {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+    /* Title */
+    h1 {
+      text-align: center;
+      padding: 20px;
+      color: #1a237e;
+      text-shadow: 0 2px 8px rgba(255,255,255,0.7);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      user-select: none;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #283593;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Garden container */
+    .garden {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      min-height: 70vh;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    /* ===== LILY FLOWER ===== */
+    .lily {
+      position: absolute;
+      width: 140px;
+      height: 160px;
+      cursor: grab;
+      transition: transform 0.25s ease;
+      transform-origin: bottom center;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .lily:active {
+      cursor: grabbing;
+    }
+
+    .lily:hover {
+      transform: scale(1.08);
+    }
+
+    .lily.sway {
+      animation: sway 4s ease-in-out infinite;
+    }
+
+    .lily.blooming .petal {
+      animation: petal-bloom 0.6s ease-out forwards;
+    }
+
+    @keyframes petal-bloom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+      100% { transform: scale(1.1); }
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+
+    .lily-stem {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 8px;
+      height: 70px;
+      background: linear-gradient(to top, #2e7d32, #66bb6a);
+      border-radius: 4px;
+      transform: translateX(-50%);
+    }
+
+    .lily-leaf {
+      position: absolute;
+      bottom: 30px;
+      width: 40px;
+      height: 18px;
+      background: #43a047;
+      border-radius: 50% 0;
+      transform-origin: left center;
+    }
+
+    .lily-leaf.left {
+      left: 20px;
+      transform: rotate(-30deg);
+    }
+
+    .lily-leaf.right {
+      right: 20px;
+      transform: rotate(30deg) scaleX(-1);
+    }
+
+    /* Petals – blue */
+    .petals {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 120px;
+      height: 100px;
+      transform: translateX(-50%);
+    }
+
+    .petal {
+      position: absolute;
+      width: 42px;
+      height: 70px;
+      background: linear-gradient(145deg, #90caf9, #42a5f5, #1e88e5);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      box-shadow: inset 0 -8px 12px rgba(0,0,0,0.15);
+      transform-origin: bottom center;
+      transition: background 0.4s ease;
+    }
+
+    /* Six petals arranged */
+    .petal:nth-child(1) { left: 39px; top: 0; transform: rotate(0deg); }
+    .petal:nth-child(2) { left: 39px; top: 0; transform: rotate(60deg); }
+    .petal:nth-child(3) { left: 39px; top: 0; transform: rotate(120deg); }
+    .petal:nth-child(4) { left: 39px; top: 0; transform: rotate(180deg); }
+    .petal:nth-child(5) { left: 39px; top: 0; transform: rotate(240deg); }
+    .petal:nth-child(6) { left: 39px; top: 0; transform: rotate(300deg); }
+
+    .lily:hover .petal {
+      background: linear-gradient(145deg, #bbdefb, #64b5f6, #2196f3);
+    }
+
+    /* Center of flower */
+    .lily-center {
+      position: absolute;
+      top: 32px;
+      left: 50%;
+      width: 28px;
+      height: 28px;
+      background: radial-gradient(circle, #ffeb3b, #fbc02d);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(255, 235, 59, 0.6);
+      z-index: 2;
+    }
+
+    .stamen {
+      position: absolute;
+      width: 3px;
+      height: 18px;
+      background: #ff8f00;
+      border-radius: 2px;
+      top: -12px;
+      left: 50%;
+      transform-origin: bottom center;
+    }
+
+    .stamen:nth-child(1) { transform: translateX(-50%) rotate(-25deg); }
+    .stamen:nth-child(2) { transform: translateX(-50%) rotate(0deg); }
+    .stamen:nth-child(3) { transform: translateX(-50%) rotate(25deg); }
+
+    /* ===== OREO PILLOW / TOWER ===== */
+    .oreo {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      cursor: grab;
+      transition: transform 0.2s ease, box-shadow 0.2s, top 0.25s ease, left 0.25s ease;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .oreo:active {
+      cursor: grabbing;
+      transform: scale(1.05);
+    }
+
+    /* Tower container grows upward */
+    .oreo-tower {
+      position: relative;
+      width: 110px;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+    }
+
+    .oreo-layer {
+      position: relative;
+      width: 110px;
+      height: 28px;
+      margin-bottom: -6px; /* slight overlap for stack look */
+      flex-shrink: 0;
+    }
+
+    .oreo-layer:last-child {
+      margin-bottom: 0;
+    }
+
+    .oreo-cookie {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50% / 40%;
+      background: #3e2723;
+      box-shadow: 
+        inset 0 2px 6px rgba(255,255,255,0.08),
+        inset 0 -4px 10px rgba(0,0,0,0.45),
+        0 4px 10px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .oreo-cookie::before {
+      content: '';
+      position: absolute;
+      width: 72%;
+      height: 55%;
+      border-radius: 50%;
+      border: 2px solid #5d4037;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.25);
+      top: 22%;
+    }
+
+    /* Cream filling between layers */
+    .oreo-cream {
+      position: absolute;
+      width: 88%;
+      height: 10px;
+      background: linear-gradient(to bottom, #fafafa, #eeeeee);
+      border-radius: 6px;
+      top: 50%;
+      left: 6%;
+      transform: translateY(-50%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    /* Embossed pattern */
+    .oreo-pattern {
+      position: absolute;
+      width: 36px;
+      height: 22px;
+      border: 1.5px solid #5d4037;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.55;
+      z-index: 2;
+    }
+
+    .oreo-pattern::before,
+    .oreo-pattern::after {
+      content: '';
+      position: absolute;
+      background: #5d4037;
+      opacity: 0.55;
+    }
+
+    .oreo-pattern::before {
+      width: 55%;
+      height: 1.5px;
+      top: 50%;
+      left: 22%;
+    }
+
+    .oreo-pattern::after {
+      width: 1.5px;
+      height: 50%;
+      left: 50%;
+      top: 25%;
+    }
+
+    /* Stack count badge for tall towers */
+    .oreo .stack-count {
+      position: absolute;
+      top: -12px;
+      right: -10px;
+      background: #e53935;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+      pointer-events: none;
+    }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      padding: 12px 24px;
+      border-radius: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    button {
+      background: #1e88e5;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: #1565c0;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .hint {
+      text-align: center;
+      color: #1a237e;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .lily { width: 100px; height: 120px; }
+      .petals { width: 90px; height: 75px; }
+      .petal { width: 32px; height: 55px; }
+      .oreo { width: 85px; height: 85px; }
+    }
+  </style>
+</head>
+<body>
+  <h1> Lilies & Oreo Garden </h1>
+  <p class="subtitle">have fun my friendo <3</p>
+
+  <div class="garden" id="garden">
+    <!-- Lilies will be added by JS -->
+    <!-- Oreos will be added by JS -->
+  </div>
+
+  <div class="controls">
+    <button onclick="addLily()">+ Add Lily</button>
+    <button onclick="addOreo()">+ Add Oreo Pillow</button>
+    <button onclick="toggleSway()">Toggle Sway</button>
+    <button onclick="changePetalColor()">Random Petal Hue</button>
+  </div>
+
+  <script>
+    const garden = document.getElementById('garden');
+    let swayEnabled = true;
+    let lilyCount = 0;
+    let oreoCount = 0;
+    let highestZ = 10;
+
+    // Create floating particles
+    function createParticles() {
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        p.style.animationDuration = (6 + Math.random() * 6) + 's';
+        document.body.appendChild(p);
+      }
+    }
+
+    // Create a lily (now fully interactive + draggable)
+    function createLily(x, y) {
+      lilyCount++;
+      const lily = document.createElement('div');
+      lily.className = 'lily' + (swayEnabled ? ' sway' : '');
+      lily.style.left = x + 'px';
+      lily.style.top = y + 'px';
+      lily.style.animationDelay = (Math.random() * 2) + 's';
+      lily.dataset.type = 'lily';
+
+      lily.innerHTML = `
+        <div class="lily-stem"></div>
+        <div class="lily-leaf left"></div>
+        <div class="lily-leaf right"></div>
+        <div class="petals">
+          <div class="petal"></div>
+          <div class="petal"></div>
+          <div class="petal"></div>
+          <div class="petal"></div>
+          <div class="petal"></div>
+          <div class="petal"></div>
+        </div>
+        <div class="lily-center">
+          <div class="stamen"></div>
+          <div class="stamen"></div>
+          <div class="stamen"></div>
+        </div>
+      `;
+
+      // Click / tap to bloom
+      lily.addEventListener('click', (e) => {
+        // Prevent bloom if we just finished dragging
+        if (lily.dataset.wasDragged === 'true') {
+          lily.dataset.wasDragged = 'false';
+          return;
+        }
+        lily.classList.remove('blooming');
+        void lily.offsetWidth; // force reflow
+        lily.classList.add('blooming');
+        // temporary scale pop
+        lily.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          lily.style.transform = '';
+          lily.classList.remove('blooming');
+        }, 600);
+      });
+
+      // Make lilies draggable too
+      makeDraggable(lily, false);
+
+      garden.appendChild(lily);
+      return lily;
+    }
+
+    // Build a single Oreo layer HTML
+    function makeOreoLayer() {
+      return `
+        <div class="oreo-layer">
+          <div class="oreo-cookie">
+            <div class="oreo-cream"></div>
+            <div class="oreo-pattern"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Create an Oreo pillow (stackable into towers)
+    function createOreo(x, y, initialCount = 1) {
+      oreoCount++;
+      const oreo = document.createElement('div');
+      oreo.className = 'oreo';
+      oreo.style.left = x + 'px';
+      oreo.style.top = y + 'px';
+      oreo.dataset.type = 'oreo';
+      oreo.dataset.stack = String(initialCount);
+
+      const tower = document.createElement('div');
+      tower.className = 'oreo-tower';
+      for (let i = 0; i < initialCount; i++) {
+        tower.insertAdjacentHTML('beforeend', makeOreoLayer());
+      }
+      oreo.appendChild(tower);
+
+      // Adjust height based on stack
+      updateTowerVisual(oreo);
+
+      makeDraggable(oreo, true);
+
+      garden.appendChild(oreo);
+      return oreo;
+    }
+
+    // Rebuild the visual tower + badge
+    function updateTowerVisual(el) {
+      const count = parseInt(el.dataset.stack || '1', 10);
+      const tower = el.querySelector('.oreo-tower');
+      if (!tower) return;
+
+      // Rebuild layers
+      tower.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        tower.insertAdjacentHTML('beforeend', makeOreoLayer());
+      }
+
+      // Height grows upward – keep bottom anchored by adjusting top
+      const layerHeight = 22; // approximate visible height per layer after overlap
+      const totalHeight = 28 + (count - 1) * layerHeight;
+      el.style.height = totalHeight + 'px';
+
+      // Badge
+      let badge = el.querySelector('.stack-count');
+      if (count <= 1) {
+        if (badge) badge.remove();
+      } else {
+        if (!badge) {
+          badge = document.createElement('div');
+          badge.className = 'stack-count';
+          el.appendChild(badge);
+        }
+        badge.textContent = count;
+      }
+    }
+
+    // Drag functionality (works for both lilies and oreos)
+    function makeDraggable(el, canStack = false) {
+      let isDragging = false;
+      let offsetX, offsetY;
+      let startX, startY;
+
+      el.addEventListener('mousedown', startDrag);
+      el.addEventListener('touchstart', startDrag, { passive: false });
+
+      function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        el.dataset.wasDragged = 'false';
+        const rect = el.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+        startX = clientX;
+        startY = clientY;
+        highestZ++;
+        el.style.zIndex = highestZ;
+
+        // Pause sway while dragging a lily
+        if (el.dataset.type === 'lily') {
+          el.classList.remove('sway');
+        }
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        // Mark as dragged if moved enough
+        if (Math.abs(clientX - startX) > 5 || Math.abs(clientY - startY) > 5) {
+          el.dataset.wasDragged = 'true';
+        }
+
+        const gardenRect = garden.getBoundingClientRect();
+        let newX = clientX - gardenRect.left - offsetX;
+        let newY = clientY - gardenRect.top - offsetY;
+
+        // Keep inside garden
+        const sizeW = el.dataset.type === 'lily' ? 140 : 110;
+        const sizeH = el.dataset.type === 'lily' ? 160 : (el.offsetHeight || 110);
+        newX = Math.max(0, Math.min(newX, gardenRect.width - sizeW));
+        newY = Math.max(0, Math.min(newY, gardenRect.height - sizeH));
+
+        el.style.left = newX + 'px';
+        el.style.top = newY + 'px';
+      }
+
+      function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        // Resume sway for lilies
+        if (el.dataset.type === 'lily' && swayEnabled) {
+          el.classList.add('sway');
+        }
+
+        // Stacking logic for Oreos
+        if (canStack && el.dataset.type === 'oreo') {
+          tryStack(el);
+        }
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('touchend', endDrag);
+    }
+
+    // Try to stack the dropped Oreo onto another nearby Oreo → builds a tower
+    function tryStack(dragged) {
+      const allOreos = [...document.querySelectorAll('.oreo')].filter(o => o !== dragged);
+      const dRect = dragged.getBoundingClientRect();
+      const dCenterX = dRect.left + dRect.width / 2;
+      // Use bottom of the tower for better stacking feel
+      const dBottom = dRect.bottom;
+
+      let closest = null;
+      let minDist = 80; // snap distance
+
+      allOreos.forEach(other => {
+        const oRect = other.getBoundingClientRect();
+        const oCenterX = oRect.left + oRect.width / 2;
+        const oTop = oRect.top;
+        // Prefer stacking near the top of existing towers
+        const dist = Math.hypot(dCenterX - oCenterX, dBottom - oTop - 20);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = other;
+        }
+      });
+
+      if (closest) {
+        // Merge into a taller tower
+        const addCount = parseInt(dragged.dataset.stack || '1', 10);
+        const oldCount = parseInt(closest.dataset.stack || '1', 10);
+        const newCount = oldCount + addCount;
+        closest.dataset.stack = newCount;
+
+        // Grow the tower upward (keep base roughly in place)
+        const layerHeight = 22;
+        const heightGain = addCount * layerHeight;
+        const currentTop = parseFloat(closest.style.top) || 0;
+        closest.style.top = Math.max(0, currentTop - heightGain) + 'px';
+
+        updateTowerVisual(closest);
+
+        // Bounce feedback
+        closest.style.transform = 'scale(1.08)';
+        setTimeout(() => {
+          closest.style.transform = '';
+        }, 220);
+
+        // Remove the dragged piece
+        dragged.remove();
+      }
+    }
+
+    // Button actions
+    function addLily() {
+      const x = 40 + Math.random() * (garden.clientWidth - 180);
+      const y = 40 + Math.random() * (garden.clientHeight - 200);
+      createLily(x, y);
+    }
+
+    function addOreo() {
+      const x = 40 + Math.random() * (garden.clientWidth - 130);
+      const y = 40 + Math.random() * (garden.clientHeight - 130);
+      createOreo(x, y);
+    }
+
+    function toggleSway() {
+      swayEnabled = !swayEnabled;
+      document.querySelectorAll('.lily').forEach(l => {
+        l.classList.toggle('sway', swayEnabled);
+      });
+    }
+
+    function changePetalColor() {
+      // Different shades of pure blue only
+      const blues = [
+        { h: 210, s: 90, l1: 78, l2: 55, l3: 42 }, // bright sky blue
+        { h: 215, s: 80, l1: 72, l2: 50, l3: 38 }, // classic medium blue
+        { h: 200, s: 85, l1: 75, l2: 52, l3: 40 }, // soft cyan-blue
+        { h: 220, s: 75, l1: 70, l2: 48, l3: 35 }, // deeper royal blue
+        { h: 205, s: 95, l1: 80, l2: 58, l3: 45 }, // light pastel blue
+        { h: 225, s: 70, l1: 65, l2: 45, l3: 32 }, // rich indigo-blue
+        { h: 195, s: 80, l1: 76, l2: 54, l3: 41 }, // cool aqua-blue
+        { h: 230, s: 65, l1: 68, l2: 46, l3: 33 }  // muted periwinkle blue
+      ];
+      const b = blues[Math.floor(Math.random() * blues.length)];
+      document.querySelectorAll('.petal').forEach(p => {
+        p.style.background = `linear-gradient(145deg, hsl(${b.h}, ${b.s}%, ${b.l1}%), hsl(${b.h}, ${b.s}%, ${b.l2}%), hsl(${b.h}, ${b.s + 5}%, ${b.l3}%))`;
+      });
+    }
+
+    // Initial setup
+    function init() {
+      createParticles();
+
+      // Place some starting lilies
+      createLily(80, 120);
+      createLily(280, 80);
+      createLily(480, 150);
+      createLily(180, 280);
+      createLily(400, 300);
+
+      // Place some starting Oreo pillows
+      createOreo(620, 100);
+      createOreo(700, 250);
+      createOreo(550, 320);
+    }
+
+    init();
+  </script>
+</body>
+</html>
